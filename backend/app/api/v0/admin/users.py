@@ -12,7 +12,8 @@ from typing import Optional
 from app.db.session import get_db
 from app.core.deps import get_current_admin_user
 from app.models.user import User
-from app.schemas.response import success_response, error_response
+from app.schemas.admin import AdminUserResponse, PaginatedResponse
+from app.schemas.response import success_response
 
 router = APIRouter()
 
@@ -79,35 +80,24 @@ async def get_users_list(
     result = await db.execute(query)
     users = result.scalars().all()
 
-    # Serialize users
-    users_data = []
-    for user in users:
-        users_data.append({
-            "id": user.id,
-            "email": user.email,
-            "user_name": user.user_name,
-            "is_admin": user.is_admin,
-            "is_enabled": user.enable,
-            "class_level": user.class_level,
-            "money": float(user.money),
-            "transfer_enable": user.transfer_enable,
-            "upload_traffic": user.u,
-            "download_traffic": user.d,
-            "total_used": user.u + user.d,
-            "reg_date": user.reg_date.isoformat() if user.reg_date else None,
-            "expire_in": user.expire_in.isoformat() if user.expire_in else None
-        })
+    # Convert to AdminUserResponse using model_dump
+    users_data = [AdminUserResponse.from_user(user).model_dump(by_alias=True) for user in users]
 
-    # Calculate total pages
-    total_pages = (total + page_size - 1) // page_size if total > 0 else 0
+    # Create paginated response
+    pagination = PaginatedResponse.create(
+        items=users_data,
+        total=total,
+        page=page,
+        page_size=page_size
+    )
 
     return success_response(
         msg="ok",
         data={
-            "users": users_data,
-            "total": total,
-            "page": page,
-            "page_size": page_size,
-            "total_pages": total_pages
+            "users": pagination.items,
+            "total": pagination.total,
+            "page": pagination.page,
+            "page_size": pagination.page_size,
+            "total_pages": pagination.total_pages
         }
     )
