@@ -8,6 +8,7 @@ It initializes the app, configures middleware, and includes all API routers.
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 from contextlib import asynccontextmanager
 
 from app.core.config import get_settings
@@ -88,15 +89,60 @@ app.add_middleware(
 )
 
 
-# Global exception handler
+# Validation error handler - returns detailed 422 errors
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """
+    Handle Pydantic validation errors with detailed information
+
+    This allows 422 errors to be returned properly instead of being caught
+    by the global exception handler.
+    """
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={
+            "ret": 0,
+            "msg": "请求参数验证失败",
+            "data": {
+                "errors": exc.errors()
+            }
+        }
+    )
+
+
+# Global exception handler - only for unhandled exceptions
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     """
     Global exception handler for all unhandled exceptions
 
+    This handler does NOT catch RequestValidationError or HTTPException,
+    allowing FastAPI's default behavior for those cases.
+
     Returns a standardized error response compatible with the original PHP project.
     """
     import traceback
+
+    # Let HTTPException pass through with default handling
+    if isinstance(exc, status.HTTPException):
+        # For HTTPException, convert to our standard response format
+        detail = exc.detail
+
+        # If detail is already a dict (our format), use it directly
+        if isinstance(detail, dict):
+            return JSONResponse(
+                status_code=exc.status_code,
+                content=detail
+            )
+        # Otherwise, wrap it in our format
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "ret": 0,
+                "msg": str(detail),
+                "data": None
+            }
+        )
 
     # Log the error
     if settings.debug:
