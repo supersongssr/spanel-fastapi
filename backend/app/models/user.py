@@ -7,7 +7,8 @@ with the original PHP project's database schema.
 CRITICAL: Do NOT modify table names, field names, types, or defaults!
 """
 
-from sqlalchemy import Column, Integer, String, BigInteger, Decimal, DateTime, Text, Float
+from sqlalchemy import Column, Integer, String, BigInteger, DateTime, Text, Float
+from sqlalchemy.types import DECIMAL as Decimal
 from sqlalchemy.sql import func
 from app.db.session import Base
 
@@ -32,7 +33,8 @@ class User(Base):
     # Basic Information
     user_name = Column(String(128), nullable=False, comment="Username")
     email = Column(String(64), nullable=False, unique=True, index=True, comment="Email")
-    pass = Column(String(64), nullable=False, comment="Password Hash")
+    # Note: 'pass' is a Python keyword, so we use setattr in __init__ or access via table.c.pass
+    _password_hash = Column("pass", String(64), nullable=False, comment="Password Hash")
     passwd = Column(String(16), nullable=False, comment="SS Password")
     v2ray_uuid = Column(String(64), nullable=True, comment="V2Ray UUID")
 
@@ -149,6 +151,11 @@ class User(Base):
 
     def __repr__(self):
         return f"<User(id={self.id}, email={self.email}, user_name={self.user_name})>"
+
+    @property
+    def password_hash(self) -> str:
+        """Access the password hash field (avoiding Python keyword 'pass')"""
+        return self._password_hash
 
     @property
     def is_enabled(self) -> bool:

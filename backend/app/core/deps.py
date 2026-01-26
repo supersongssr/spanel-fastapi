@@ -6,7 +6,7 @@ including database sessions, Redis clients, and user authentication.
 """
 
 from typing import AsyncGenerator, Optional
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Header
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -14,36 +14,48 @@ from app.db.session import get_db
 from app.db.redis import RedisClient, get_redis
 from app.models.user import User
 from app.core.security import decode_access_token
+from app.services.auth_service import AuthService
 
 
 async def get_current_user(
     db: AsyncSession = Depends(get_db),
-    token: Optional[str] = None
+    redis: RedisClient = Depends(get_redis),
+    authorization: Optional[str] = Header(None)
 ) -> User:
     """
     Dependency to get the current authenticated user
 
+    Extracts and validates JWT token from Authorization header.
+
     Args:
         db: Database session
-        token: JWT access token (from Authorization header or cookie)
+        redis: Redis client
+        authorization: Authorization header (format: "Bearer <token>")
 
     Returns:
         The authenticated user object
 
     Raises:
-        HTTPException: If authentication fails
+        HTTPException: 401 if authentication fails, 403 if account disabled
     """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        detail={"ret": 0, "msg": "未授权或 Token 无效", "data": None},
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-    if not token:
+    # Extract token from Authorization header
+    if not authorization:
         raise credentials_exception
 
-    # Decode token
-    payload = decode_access_token(token)
+    if not authorization.startswith("Bearer "):
+        raise credentials_exception
+
+    token = authorization.split(" ")[1]
+
+    # Verify token and check blacklist
+    payload = await AuthService.verify_token(redis, token)
+
     if payload is None:
         raise credentials_exception
 
@@ -61,7 +73,7 @@ async def get_current_user(
     if not user.is_enabled:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="User account is disabled"
+            detail={"ret": 0, "msg": "用户账户已被禁用", "data": None}
         )
 
     return user
@@ -96,6 +108,8 @@ async def get_current_admin_user(
     """
     Dependency to get the current admin user
 
+    Verifies that the current user has admin privileges.
+
     Args:
         current_user: The authenticated user
 
@@ -103,12 +117,12 @@ async def get_current_admin_user(
         The admin user object
 
     Raises:
-        HTTPException: If user is not an admin
+        HTTPException: 403 if user is not an admin
     """
     if not current_user.is_admin_user:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not enough permissions"
+            detail={"ret": 0, "msg": "权限不足", "data": None}
         )
     return current_user
 

@@ -131,10 +131,15 @@ class Settings(BaseSettings):
     max_page_size: int = 100
 
     # ========== CORS Settings ==========
-    cors_origins: List[str] = ["http://localhost:3000", "http://localhost:8000"]
+    cors_origins: str = "http://localhost:3000,http://localhost:8000"
     cors_allow_credentials: bool = True
     cors_allow_methods: List[str] = ["*"]
     cors_allow_headers: List[str] = ["*"]
+
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Parse CORS origins from comma-separated string to list"""
+        return [origin.strip() for origin in self.cors_origins.split(",")]
 
     # ========== Forbidden China IP Access ==========
     is_forbidden_china: bool = False
