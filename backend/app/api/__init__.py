@@ -10,6 +10,8 @@ from app.api.v0.auth import router as auth_router
 from app.api.v0.user import router as user_router
 from app.api.v0.admin import router as admin_router
 from app.api.v0.link import router as link_router
+from app.api.v0.node import router as node_router
+from app.api.v0.payment import router as payment_router
 
 # Create main API router
 api_router = APIRouter()
@@ -41,3 +43,15 @@ api_router.include_router(
 
 # Include link/subscription router (no prefix, allows /link/{token})
 api_router.include_router(link_router, prefix="/v0/link")
+
+# Include node backend communication router (Mu API / WebAPI)
+api_router.include_router(
+    node_router,
+    prefix="/v0/node"
+)
+
+# Include payment router
+api_router.include_router(
+    payment_router,
+    prefix="/v0/payment"
+)
