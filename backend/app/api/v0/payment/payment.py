@@ -19,6 +19,7 @@ from app.core.deps import get_current_user
 from app.models.user import User
 from app.models.paylist import Paylist
 from app.schemas.response import success_response, error_response
+from app.services.payment_service import PaymentService
 from pydantic import BaseModel, Field
 
 router = APIRouter()
@@ -82,21 +83,13 @@ async def create_payment_order(
     if recharge_amount <= 0:
         return error_response(msg="充值金额必须大于0")
 
-    # Generate transaction number
-    tradeno = f"ORDER-{int(datetime.now().timestamp())}-{current_user.id}"
-
-    # Create order
-    order = Paylist(
-        userid=current_user.id,
-        total=recharge_amount,
-        status=0,  # 0 = unpaid
-        tradeno=tradeno,
-        datetime=int(datetime.now().timestamp())
+    # Create order using PaymentService
+    order = await PaymentService.create_payment_order(
+        user_id=current_user.id,
+        amount=recharge_amount,
+        gateway=request.gateway,
+        db=db
     )
-
-    db.add(order)
-    await db.commit()
-    await db.refresh(order)
 
     # Generate payment URL based on gateway
     # For now, return a placeholder

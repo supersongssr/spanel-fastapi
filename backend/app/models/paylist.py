@@ -4,7 +4,7 @@ Payment Models
 These modules define the paylist, payback, and code table models.
 """
 
-from sqlalchemy import Column, Integer, BigInteger, String, Text, Decimal, DateTime
+from sqlalchemy import Column, Integer, BigInteger, String, Text, DateTime, Numeric
 from app.db.session import Base
 
 
@@ -19,7 +19,7 @@ class Paylist(Base):
 
     id = Column(BigInteger, primary_key=True, autoincrement=True, comment="Order ID")
     userid = Column(BigInteger, nullable=False, comment="User ID")
-    total = Column(Decimal(12, 2), nullable=False, comment="Amount")
+    total = Column(Numeric(12, 2), nullable=False, comment="Amount")
     status = Column(Integer, nullable=False, default=0, comment="Status (0=unpaid, 1=paid)")
     tradeno = Column(Text, nullable=True, comment="Transaction Number")
     datetime = Column(BigInteger, nullable=False, default=0, comment="Order Time (timestamp)")
@@ -38,10 +38,10 @@ class Payback(Base):
     __tablename__ = "payback"
 
     id = Column(BigInteger, primary_key=True, autoincrement=True, comment="Payback ID")
-    total = Column(Decimal(12, 2), nullable=False, comment="Purchase Amount")
+    total = Column(Numeric(12, 2), nullable=False, comment="Purchase Amount")
     userid = Column(BigInteger, nullable=False, comment="User ID")
     ref_by = Column(BigInteger, nullable=False, comment="Referrer ID")
-    ref_get = Column(Decimal(12, 2), nullable=False, comment="Commission Amount")
+    ref_get = Column(Numeric(12, 2), nullable=False, comment="Commission Amount")
     datetime = Column(BigInteger, nullable=False, comment="Time (timestamp)")
     callback = Column(Integer, nullable=True, comment="Callback Status (0=no, 1=yes, 3=referrer deleted)")
 
@@ -61,7 +61,7 @@ class Code(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True, comment="Code ID")
     code = Column(Text, nullable=False, comment="Code String")
     type = Column(Integer, nullable=False, comment="Type (-1=deposit, -2=withdraw, >0=traffic)")
-    number = Column(Decimal(11, 2), nullable=False, comment="Amount/Traffic")
+    number = Column(Numeric(11, 2), nullable=False, comment="Amount/Traffic")
     isused = Column(Integer, nullable=False, default=0, comment="Used Status (0=no, 1=yes)")
     userid = Column(BigInteger, nullable=False, comment="User ID")
     usedatetime = Column(DateTime, nullable=False, comment="Usage Time")

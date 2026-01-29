@@ -155,6 +155,11 @@ class Settings(BaseSettings):
     # ========== Payback (Referral Commission) Settings ==========
     payback_count: int = 3  # How many levels of referral
     payback_money: float = 0.2  # 20% per level
+    enable_payback: bool = True  # Enable referral commission
+
+    # ========== Scheduler Settings ==========
+    enable_scheduler: bool = True  # Enable APScheduler
+    scheduler_timezone: str = "Asia/Shanghai"  # Scheduler timezone
 
     # ========== Session Settings ==========
     session_expire: int = 7  # days

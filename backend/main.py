@@ -14,6 +14,7 @@ from contextlib import asynccontextmanager
 from app.core.config import get_settings
 from app.db.session import init_db, close_db
 from app.db.redis import init_redis, close_redis
+from app.core.scheduler import start_scheduler, stop_scheduler
 from app.api import api_router
 from app.schemas.response import error_response
 
@@ -51,6 +52,13 @@ async def lifespan(app: FastAPI):
         print(f"⚠️  Warning: Redis initialization failed: {e}")
         print("   Continuing anyway...")
 
+    # Start scheduler
+    try:
+        start_scheduler()
+    except Exception as e:
+        print(f"⚠️  Warning: Scheduler startup failed: {e}")
+        print("   Continuing without scheduler...")
+
     print("✅ Application started successfully!")
     print("=" * 60)
 
@@ -59,6 +67,12 @@ async def lifespan(app: FastAPI):
     # Shutdown
     print("\n" + "=" * 60)
     print("🛑 Shutting down SS-Panel FastAPI...")
+
+    # Stop scheduler
+    try:
+        stop_scheduler()
+    except Exception as e:
+        print(f"⚠️  Warning: Scheduler shutdown failed: {e}")
 
     # Close connections
     await close_db()
