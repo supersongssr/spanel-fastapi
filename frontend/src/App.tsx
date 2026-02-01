@@ -3,6 +3,8 @@ import { Toaster } from "sonner"
 import UserLayout from "@/components/layout/UserLayout"
 import Dashboard from "@/pages/Dashboard"
 import NodeList from "@/pages/NodeList"
+import Shop from "@/pages/Shop"
+import TopUp from "@/pages/TopUp"
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Route path="/dashboard" element={<UserLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="nodes" element={<NodeList />} />
+          <Route path="shop" element={<Shop />} />
+          <Route path="topup" element={<TopUp />} />
           {/* 其他路由可以后续添加 */}
           <Route path="*" element={<Dashboard />} />
         </Route>
