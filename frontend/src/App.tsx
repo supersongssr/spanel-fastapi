@@ -1,5 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { Toaster } from "sonner"
+import Index from "@/pages/Index"
+import Login from "@/pages/auth/Login"
+import Register from "@/pages/auth/Register"
+import ResetPassword from "@/pages/auth/password/Reset"
 import UserLayout from "@/components/layout/UserLayout"
 import AdminLayout from "@/components/layout/AdminLayout"
 import Dashboard from "@/pages/Dashboard"
@@ -37,10 +41,15 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* 默认重定向到仪表盘 */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        {/* 门户首页 */}
+        <Route path="/" element={<Index />} />
 
-        {/* 用户中心路由 */}
+        {/* 认证页面 */}
+        <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/register" element={<Register />} />
+        <Route path="/auth/password/reset" element={<ResetPassword />} />
+
+        {/* 用户中心路由 - 需要认证 */}
         <Route path="/dashboard" element={<UserLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="nodes" element={<NodeList />} />
@@ -51,11 +60,10 @@ function App() {
           <Route path="tickets" element={<Tickets />} />
           <Route path="purchases" element={<Purchases />} />
           <Route path="traffic" element={<Traffic />} />
-          {/* 其他路由可以后续添加 */}
           <Route path="*" element={<Dashboard />} />
         </Route>
 
-        {/* 管理员后台路由 */}
+        {/* 管理员后台路由 - 需要管理员权限 */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="announcements" element={<AdminAnnouncements />} />
@@ -78,9 +86,11 @@ function App() {
           <Route path="transactions/coupons" element={<TransactionCoupons />} />
           <Route path="orders" element={<AdminOrderList />} />
           <Route path="settings" element={<AdminSettings />} />
-          {/* 管理员其他路由可以后续添加 */}
           <Route path="*" element={<AdminDashboard />} />
         </Route>
+
+        {/* 404 - 未匹配路由重定向到首页 */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
       {/* Toast 通知 */}
