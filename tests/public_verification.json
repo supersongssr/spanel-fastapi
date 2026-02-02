@@ -1,0 +1,46 @@
+{
+  "test": "Public URL Verification",
+  "timestamp": "2026-02-01T11:04:11.102Z",
+  "status": "success",
+  "urls": [
+    "https://test-spanel-fastapi.freessr.bid/dashboard/invite",
+    "https://test-spanel-fastapi.freessr.bid/dashboard/settings"
+  ],
+  "screenshots": [
+    "tests/invite_public.png",
+    "tests/settings_public.png"
+  ],
+  "logs": [
+    {
+      "type": "info",
+      "text": "Navigating to invite page",
+      "timestamp": "2026-02-01T11:04:00.554Z"
+    },
+    {
+      "type": "validation",
+      "text": "Invite page - 累计佣金: 1, 邀请链接输入框: 0",
+      "timestamp": "2026-02-01T11:04:05.888Z"
+    },
+    {
+      "type": "info",
+      "text": "Navigating to settings page",
+      "timestamp": "2026-02-01T11:04:05.888Z"
+    },
+    {
+      "type": "validation",
+      "text": "Settings page - 安全设置: 1, 连接信息: 1, 通知设置: 1",
+      "timestamp": "2026-02-01T11:04:11.102Z"
+    }
+  ],
+  "validation": {
+    "invitePage": {
+      "commissionStats": true,
+      "inviteLinkInput": false
+    },
+    "settingsPage": {
+      "securitySection": true,
+      "connectionSection": true,
+      "notificationSection": true
+    }
+  }
+}

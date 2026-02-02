@@ -1,0 +1,47 @@
+{
+  "test": "Support & Traffic Modules Verification",
+  "timestamp": "2026-02-01T11:15:13.408Z",
+  "status": "success",
+  "urls": [
+    "https://test-spanel-fastapi.freessr.bid/dashboard/tickets",
+    "https://test-spanel-fastapi.freessr.bid/dashboard/purchases",
+    "https://test-spanel-fastapi.freessr.bid/dashboard/traffic"
+  ],
+  "screenshots": [
+    "tests/tickets_public.png",
+    "tests/purchases_public.png",
+    "tests/traffic_public.png"
+  ],
+  "logs": [
+    {
+      "type": "validation",
+      "text": "Tickets page - 统计卡片: 1, 工单列表: 1",
+      "timestamp": "2026-02-01T11:15:02.972Z"
+    },
+    {
+      "type": "validation",
+      "text": "Purchases page - 统计卡片: 1, 订单表格: 1",
+      "timestamp": "2026-02-01T11:15:08.201Z"
+    },
+    {
+      "type": "validation",
+      "text": "Traffic page - 统计卡片: 1, 进度条: 1, 每日记录: 1",
+      "timestamp": "2026-02-01T11:15:13.408Z"
+    }
+  ],
+  "validation": {
+    "tickets": {
+      "stats": true,
+      "list": true
+    },
+    "purchases": {
+      "stats": true,
+      "table": true
+    },
+    "traffic": {
+      "stats": true,
+      "progress": true,
+      "daily": true
+    }
+  }
+}

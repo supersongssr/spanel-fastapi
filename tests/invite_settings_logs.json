@@ -1,0 +1,31 @@
+{
+  "test": "Invite and Settings Pages",
+  "timestamp": "2026-02-01T10:56:28.227Z",
+  "status": "success",
+  "logs": [
+    {
+      "type": "info",
+      "text": "Navigating to Invite page...",
+      "timestamp": "2026-02-01T10:56:21.364Z"
+    },
+    {
+      "type": "info",
+      "text": "Screenshot saved: tests/invite_page.png",
+      "timestamp": "2026-02-01T10:56:24.957Z"
+    },
+    {
+      "type": "info",
+      "text": "Navigating to Settings page...",
+      "timestamp": "2026-02-01T10:56:24.957Z"
+    },
+    {
+      "type": "info",
+      "text": "Screenshot saved: tests/settings_page.png",
+      "timestamp": "2026-02-01T10:56:28.227Z"
+    }
+  ],
+  "screenshots": [
+    "tests/invite_page.png",
+    "tests/settings_page.png"
+  ]
+}

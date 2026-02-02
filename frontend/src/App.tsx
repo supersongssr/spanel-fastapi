@@ -5,6 +5,11 @@ import Dashboard from "@/pages/Dashboard"
 import NodeList from "@/pages/NodeList"
 import Shop from "@/pages/Shop"
 import TopUp from "@/pages/TopUp"
+import Invite from "@/pages/Invite"
+import Settings from "@/pages/Settings"
+import Tickets from "@/pages/Tickets"
+import Purchases from "@/pages/Purchases"
+import Traffic from "@/pages/Traffic"
 
 function App() {
   return (
@@ -19,6 +24,11 @@ function App() {
           <Route path="nodes" element={<NodeList />} />
           <Route path="shop" element={<Shop />} />
           <Route path="topup" element={<TopUp />} />
+          <Route path="invite" element={<Invite />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="tickets" element={<Tickets />} />
+          <Route path="purchases" element={<Purchases />} />
+          <Route path="traffic" element={<Traffic />} />
           {/* 其他路由可以后续添加 */}
           <Route path="*" element={<Dashboard />} />
         </Route>
